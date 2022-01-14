@@ -2,7 +2,7 @@ from random import choice
 from tqdm import tqdm
 
 
-TRIALS = 1000000
+TRIALS = 10**6
 DOORS = ["A","B","C"]
 
 
@@ -40,17 +40,32 @@ def door_change(prize, doors=DOORS):
     return True if selected==prize else False
 
 
-if __name__=="__main__":
+def experiment(doors=DOORS, trials=TRIALS, ):
+    """
+    Empirical proof to Month Hall problem. Three different
+    possible conditions are compared and results are returned.
+
+    doors -> list: a list of door names
+    trials -> int: total trial amount
+
+    total -> int: current amount of trials
+    win_normal -> int: amount of wins without door removal - control
+    win_no_change -> int: amount of wins with door removal without door change
+    win_change -> int: amount of wins with door removal and door change
+    """
     total, win_normal, win_no_change, win_change = 0, 0, 0, 0
-    for i in tqdm(range(TRIALS)):
-        prize = choice(DOORS)
+    for i in tqdm(range(trials)):
+        prize = choice(doors)
         total += 1
         win_normal += doors_normal(prize)
         win_no_change += door_no_change(prize)
         win_change += door_change(prize)
+    return total, win_normal, win_no_change, win_change
 
-
-    print(f"\ntotal: {total}\twin_normal: {win_normal}\tratio: {(win_normal*100)//total}%")
-    print(f"total: {total}\twin_no_change: {win_no_change}\tratio: {(win_no_change*100)//total}%")
-    print(f"total: {total}\twin_change: {win_change}\tratio: {(win_change*100)//total}%")
     
+if __name__=="__main__":
+    total, win_normal, win_no_change, win_change = experiment()
+
+    print(f"\ntotal: {total}\twin_normal: {win_normal}\tratio: {(win_normal*100)/total}%")
+    print(f"total: {total}\twin_no_change: {win_no_change}\tratio: {(win_no_change*100)/total}%")
+    print(f"total: {total}\twin_change: {win_change}\tratio: {(win_change*100)/total}%")
